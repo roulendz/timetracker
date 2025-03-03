@@ -200,11 +200,31 @@ function updateTime() {
         }, 3000);
     }
 }
+// Add this function to handle button states
+function updateAdjustmentButtons() {
+    const buttons = document.querySelectorAll('[onclick^="adjustTime"]');
+    buttons.forEach(button => {
+        if (!alarmSettings.isActive) {
+            button.disabled = true;
+            button.classList.add('disabled');
+            // Remove hover and click listeners when disabled
+            button.removeEventListener('mouseenter', () => playHoverSound('adjust'));
+            button.removeEventListener('click', () => playClickSound('adjust'));
+        } else {
+            button.disabled = false;
+            button.classList.remove('disabled');
+            // Re-add sound effects when enabled
+            button.addEventListener('mouseenter', () => playHoverSound('adjust'));
+            button.addEventListener('click', () => playClickSound('adjust'));
+        }
+    });
+}
 
+// Modify the toggleAlarm function
 function toggleAlarm() {
     const toggleButton = document.getElementById('toggleAlarm');
     alarmSettings.isActive = !alarmSettings.isActive;
-    isAlarmTriggered = false; // Reset flag when alarm is toggled
+    isAlarmTriggered = false;
     
     if (alarmSettings.isActive) {
         toggleButton.textContent = 'Stop Alarm';
@@ -216,9 +236,72 @@ function toggleAlarm() {
         toggleButton.classList.add('btn-primary');
     }
     
+    updateAdjustmentButtons(); // Add this line
     saveToLocalStorage();
 }
 
+// Add this to initializeApp function, just before the closing brace
+function initializeApp() {
+    const savedLogs = localStorage.getItem('alarmLogs');
+    const savedSettings = localStorage.getItem('alarmSettings');
+    
+    if (savedLogs) {
+        logs = JSON.parse(savedLogs);
+        renderLogs();
+    }
+    
+    if (savedSettings) {
+        alarmSettings = JSON.parse(savedSettings);
+        // Only restore saved time if alarm is active
+        if (alarmSettings.isActive) {
+            document.getElementById('alarmTime').value = alarmSettings.time;
+        }
+        document.getElementById('alarmTitle').value = alarmSettings.title;
+        
+        // Restore button state
+        const toggleButton = document.getElementById('toggleAlarm');
+        if (alarmSettings.isActive) {
+            toggleButton.textContent = 'Stop Alarm';
+            toggleButton.classList.remove('btn-primary');
+            toggleButton.classList.add('btn-danger');
+        } else {
+            toggleButton.textContent = 'Start Alarm';
+            toggleButton.classList.remove('btn-danger');
+            toggleButton.classList.add('btn-primary');
+        }
+    }
+}
+// Add this to initializeApp function, just before the closing brace
+function initializeApp() {
+    const savedLogs = localStorage.getItem('alarmLogs');
+    const savedSettings = localStorage.getItem('alarmSettings');
+    
+    if (savedLogs) {
+        logs = JSON.parse(savedLogs);
+        renderLogs();
+    }
+    
+    if (savedSettings) {
+        alarmSettings = JSON.parse(savedSettings);
+        // Only restore saved time if alarm is active
+        if (alarmSettings.isActive) {
+            document.getElementById('alarmTime').value = alarmSettings.time;
+        }
+        document.getElementById('alarmTitle').value = alarmSettings.title;
+        
+        // Restore button state
+        const toggleButton = document.getElementById('toggleAlarm');
+        if (alarmSettings.isActive) {
+            toggleButton.textContent = 'Stop Alarm';
+            toggleButton.classList.remove('btn-primary');
+            toggleButton.classList.add('btn-danger');
+        } else {
+            toggleButton.textContent = 'Start Alarm';
+            toggleButton.classList.remove('btn-danger');
+            toggleButton.classList.add('btn-primary');
+        }
+    }
+}
 function playAlarmSequence() {
     let beepCount = 0;
     
@@ -278,7 +361,103 @@ function setDefaultTime() {
         saveToLocalStorage();
     }
 }
+// Add this at the top with other global variables
+let audioContext = null;
 
+// Replace the existing click and hover sound functions with these versions
+function initAudioContext() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioContext.state === 'suspended') {
+        audioContext.resume();
+    }
+}
+
+function playClickSound(buttonType = 'default') {
+    if (!audioContext) return;
+    
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    switch (buttonType) {
+        case 'toggle':
+            oscillator.type = 'square';
+            oscillator.frequency.value = 2400;
+            gainNode.gain.value = 0.07;
+            break;
+        case 'adjust':
+            oscillator.type = 'sine';
+            oscillator.frequency.value = 1800;
+            gainNode.gain.value = 0.05;
+            break;
+        default:
+            oscillator.type = 'sine';
+            oscillator.frequency.value = 2000;
+            gainNode.gain.value = 0.05;
+    }
+
+    oscillator.start();
+    setTimeout(() => {
+        oscillator.stop();
+    }, 50);
+}
+
+function playHoverSound(buttonType = 'default') {
+    if (!audioContext) return;
+    
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    switch (buttonType) {
+        case 'toggle':
+            oscillator.type = 'triangle';
+            oscillator.frequency.value = 1800;
+            gainNode.gain.value = 0.04;
+            break;
+        case 'adjust':
+            oscillator.type = 'sine';
+            oscillator.frequency.value = 1300;
+            gainNode.gain.value = 0.03;
+            break;
+        default:
+            oscillator.type = 'sine';
+            oscillator.frequency.value = 1500;
+            gainNode.gain.value = 0.03;
+    }
+
+    oscillator.start();
+    setTimeout(() => {
+        oscillator.stop();
+    }, 30);
+}
+
+// Modify the DOMContentLoaded event listener
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize audio context on first click anywhere on the page
+    document.addEventListener('click', () => {
+        initAudioContext();
+    }, { once: true });
+
+    // Add specific sound for toggle alarm button
+    const toggleButton = document.getElementById('toggleAlarm');
+    toggleButton.addEventListener('mouseenter', () => playHoverSound('toggle'));
+    toggleButton.addEventListener('click', () => playClickSound('toggle'));
+
+    // Add specific sound for adjustment buttons
+    document.querySelectorAll('button').forEach(button => {
+        if (button.id !== 'toggleAlarm') {
+            button.addEventListener('mouseenter', () => playHoverSound('adjust'));
+            button.addEventListener('click', () => playClickSound('adjust'));
+        }
+    });
+});
 // Initialize the app
 initializeApp();
 setDefaultTime(); // Add this line after initializeApp
