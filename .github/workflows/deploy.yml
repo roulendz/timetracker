@@ -1,4 +1,4 @@
-# GitHub Pages Configuration File (.github/workflows/deploy.yml)
+# file: .github/workflows/deploy.yml
 name: Deploy to GitHub Pages
 
 on:
@@ -7,13 +7,11 @@ on:
   # Allow manual deployments
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write   # Allow write access to the repository contents
+  pages: write      # Allow write access to GitHub Pages
+  id-token: write   # For authentication when deploying
 
-# Allow only one concurrent deployment
 concurrency:
   group: "pages"
   cancel-in-progress: true
@@ -22,18 +20,22 @@ jobs:
   deploy:
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # Setup GitHub Pages
       - name: Setup Pages
         uses: actions/configure-pages@v4
+
+      # Upload static files (all files in the repository)
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          # Upload entire repository
-          path: '.'
+          path: .  # Upload everything in the repository (ensure your HTML, CSS, and JS are in the root)
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v3
