@@ -48,3 +48,15 @@
     color: #999;
     font-style: italic;
 }
+.btn {
+    font-size: 1.2rem !important;
+    line-height: 1.5;
+}
+
+.minus-10:hover, .minus-5:hover {
+    transform: scale(1.05) rotate(-5deg);
+}
+
+.plus-5:hover, .plus-10:hover {
+    transform: scale(1.05) rotate(5deg);
+}
