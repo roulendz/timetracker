@@ -220,18 +220,30 @@ function toggleAlarm() {
 }
 
 function playAlarmSequence() {
-    const alarmSound = document.getElementById('alarmSound');
     let beepCount = 0;
     
     function playBeep() {
         if (beepCount < 3) {
-            alarmSound.currentTime = 0;
-            alarmSound.play()
-                .then(() => {
-                    beepCount++;
-                    setTimeout(playBeep, 1000);
-                })
-                .catch(error => console.error('Error playing sound:', error));
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.type = 'sine';
+            oscillator.frequency.value = 800; // Frequency in Hz
+            gainNode.gain.value = 0.1; // Volume control
+
+            oscillator.start();
+            
+            // Stop the beep after 200ms
+            setTimeout(() => {
+                oscillator.stop();
+                audioContext.close();
+                beepCount++;
+                setTimeout(playBeep, 800); // Wait 800ms before next beep
+            }, 200);
         }
     }
     
