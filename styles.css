@@ -1,0 +1,50 @@
+.plus-10 {
+    background-color: #FFB5E8 !important; /* Pastel pink */
+    border: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.plus-5 {
+    background-color: #FFC9DE !important; /* Light pastel pink */
+    border: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.minus-5 {
+    background-color: #B5EAD7 !important; /* Pastel mint */
+    border: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.minus-10 {
+    background-color: #C7F0E3 !important; /* Light pastel mint */
+    border: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.table {
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.table thead {
+    background-color: #B5EAD7;
+}
+
+.table thead th {
+    font-size: 1.1rem;
+    padding: 15px;
+}
+
+.table tbody tr {
+    transition: transform 0.2s;
+}
+
+.table tbody tr:hover {
+    transform: scale(1.01);
+}
+
+.table input::placeholder {
+    color: #999;
+    font-style: italic;
+}

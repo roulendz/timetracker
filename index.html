@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kid-Friendly Alarm</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./styles.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <h2 class="text-center mb-4 display-6">🎈 Kid's Timer 🎈</h2>
+                        
+                        <div class="mb-4">
+                            <label for="alarmTitle" class="form-label fw-bold">Goal</label>
+                            <input type="text" class="form-control form-control-lg" id="alarmTitle" placeholder="What's your goal?">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="alarmTime" class="form-label fw-bold">Set Time</label>
+                            <input type="time" class="form-control form-control-lg" id="alarmTime">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <button id="toggleAlarm" class="btn btn-lg w-100 shadow-sm">Start Alarm</button>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between gap-2 mb-4">
+                            <button class="btn btn-lg flex-fill minus-10" onclick="adjustTime(-10)">-10</button>
+                            <button class="btn btn-lg flex-fill minus-5" onclick="adjustTime(-5)">-5</button>
+                            <button class="btn btn-lg flex-fill plus-5" onclick="adjustTime(5)">+5</button>
+                            <button class="btn btn-lg flex-fill plus-10" onclick="adjustTime(10)">+10</button>
+                        </div>
+                        
+                        <div class="text-center mb-4">
+                            <h3 class="display-6" id="currentTime"></h3>
+                            <h4 class="text-muted" id="nextAlarm"></h4>
+                            <h4 class="text-primary fw-bold" id="countdown"></h4>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h4 class="mb-3 fw-bold">✨ My Time Adventures ✨</h4>
+                            <div class="table-responsive rounded shadow-sm">
+                                <table class="table table-hover">
+                                    <thead class="table-primary">
+                                        <tr class="text-center">
+                                            <th>⏰ When</th>
+                                            <th>🔄 Change</th>
+                                            <th>📝 My Notes</th>
+                                            <th>❌ Remove</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="logTable"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="alarmSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869.wav" preload="auto"></audio>
+    
+    <script src="./app.js"></script>
+</body>
+</html>
