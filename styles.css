@@ -3,11 +3,17 @@
     border: none;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
+.plus-10.disabled, .plus-10:disabled {
+    background-color: #d4d4d4 !important;
+}
 
 .plus-5 {
     background-color: #FFC9DE !important; /* Light pastel pink */
     border: none;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.plus-5.disabled, .plus-5:disabled {
+    background-color: #d4d4d4 !important;
 }
 
 .minus-5 {
@@ -15,11 +21,17 @@
     border: none;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
+.minus-5.disabled, .minus-5:disabled {
+    background-color: #d4d4d4 !important;
+}
 
 .minus-10 {
     background-color: #C7F0E3 !important; /* Light pastel mint */
     border: none;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.minus-10.disabled, .minus-10:disabled {
+    background-color: #d4d4d4 !important;
 }
 
 .table {
@@ -59,4 +71,11 @@
 
 .plus-5:hover, .plus-10:hover {
     transform: scale(1.05) rotate(5deg);
+}
+
+button.disabled,
+button:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    filter: grayscale(50%) !important;
 }

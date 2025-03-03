@@ -257,7 +257,7 @@ function initializeApp() {
             document.getElementById('alarmTime').value = alarmSettings.time;
         }
         document.getElementById('alarmTitle').value = alarmSettings.title;
-        
+        updateAdjustmentButtons(); // Add this line to disable buttons on initial load
         // Restore button state
         const toggleButton = document.getElementById('toggleAlarm');
         if (alarmSettings.isActive) {
@@ -288,7 +288,7 @@ function initializeApp() {
             document.getElementById('alarmTime').value = alarmSettings.time;
         }
         document.getElementById('alarmTitle').value = alarmSettings.title;
-        
+        updateAdjustmentButtons(); // Add this line to disable buttons on initial load
         // Restore button state
         const toggleButton = document.getElementById('toggleAlarm');
         if (alarmSettings.isActive) {
@@ -415,27 +415,41 @@ function playHoverSound(buttonType = 'default') {
     oscillator.connect(gainNode);
     gainNode.connect(audioContext.destination);
 
+    // Softer attack and release
+    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.02, audioContext.currentTime + 0.02);
+    gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.15);
+
     switch (buttonType) {
         case 'toggle':
-            oscillator.type = 'triangle';
-            oscillator.frequency.value = 1800;
-            gainNode.gain.value = 0.04;
-            break;
-        case 'adjust':
             oscillator.type = 'sine';
-            oscillator.frequency.value = 1300;
-            gainNode.gain.value = 0.03;
+            oscillator.frequency.value = 392.00; // G4 - a pleasant, neutral note
+            break;
+        case '-10':
+            oscillator.type = 'sine';
+            oscillator.frequency.value = 523.25; // C5
+            break;
+        case '-5':
+            oscillator.type = 'sine';
+            oscillator.frequency.value = 587.33; // D5
+            break;
+        case '+5':
+            oscillator.type = 'sine';
+            oscillator.frequency.value = 659.25; // E5
+            break;
+        case '+10':
+            oscillator.type = 'sine';
+            oscillator.frequency.value = 698.46; // F5
             break;
         default:
             oscillator.type = 'sine';
-            oscillator.frequency.value = 1500;
-            gainNode.gain.value = 0.03;
+            oscillator.frequency.value = 440;
     }
 
     oscillator.start();
     setTimeout(() => {
         oscillator.stop();
-    }, 30);
+    }, 150); // Longer duration for smoother sound
 }
 
 // Modify the DOMContentLoaded event listener
@@ -453,7 +467,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Add specific sound for adjustment buttons
     document.querySelectorAll('button').forEach(button => {
         if (button.id !== 'toggleAlarm') {
-            button.addEventListener('mouseenter', () => playHoverSound('adjust'));
+            const minutes = button.getAttribute('onclick').match(/-?\d+/)[0];
+            button.addEventListener('mouseenter', () => playHoverSound(minutes > 0 ? `+${minutes}` : minutes));
             button.addEventListener('click', () => playClickSound('adjust'));
         }
     });
@@ -461,6 +476,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // Initialize the app
 initializeApp();
 setDefaultTime(); // Add this line after initializeApp
-
+updateAdjustmentButtons(); // Add this line to disable buttons on initial load
 // Update time every second
 setInterval(updateTime, 1000);
