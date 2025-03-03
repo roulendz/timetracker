@@ -32,7 +32,7 @@ jobs:
 
       # Upload static files (all files in the repository)
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v2   # Corrected version
         with:
           path: .  # Upload everything in the repository (ensure your HTML, CSS, and JS are in the root)
 
